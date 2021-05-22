@@ -1,7 +1,13 @@
-import * as React from "react";
+import Auth from "../Auth/Auth";
 
-export default function Home(): React.ReactElement {
+type HomeProps = {
+  auth: Auth
+}
+export default function Home({ auth }: HomeProps): React.ReactElement {
   return (
-    <h1>Home Screen</h1>
+    <>
+      <h1>Home Screen</h1>
+      <button onClick={() => auth.login()}>Log me in!</button>
+    </>
   );
 }

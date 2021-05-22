@@ -1,25 +1,28 @@
-import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import { Route, RouterProps, useHistory } from 'react-router';
+import { Container, ThemeProvider } from 'theme-ui'
+import Home from './screens/Home';
+import Profile from './screens/Profile';
+import theme from './theme'
+import { Nav } from './components';
+import Auth from './Auth/Auth';
 
 function App() {
+  const history = useHistory();
+  const auth = new Auth(history)
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <ThemeProvider theme={theme}>
+        <Nav />
+
+        <Container>
+          <Route path="/" exact render={(props: RouterProps) => <Home auth={auth} {...props} />} />
+          <Route path="/profile" component={Profile} />
+
+        </Container>
+      </ThemeProvider>
+    </>
+
   );
 }
 
