@@ -14,7 +14,7 @@ export default function Courses(): JSX.Element {
     const getCourses = () => {
       fetch('/courses', {
         headers: {
-          Authorization: `Bearer ${auth.getAccessToken}`
+          Authorization: `Bearer ${auth.getAccessToken()}`
         }
       }).then(response => {
         if (response.ok) return response.json();
@@ -26,7 +26,7 @@ export default function Courses(): JSX.Element {
     const getAdminData = () => {
       fetch('/admin', {
         headers: {
-          Authorization: `Bearer ${auth.getAccessToken}`
+          Authorization: `Bearer ${auth.getAccessToken()}`
         }
       }).then(response => {
         if (response.ok) return response.json();

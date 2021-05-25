@@ -15,28 +15,25 @@ import PrivateRoute from './PrivateRoute';
 
 
 function App() {
-  const history = useHistory();
-  const auth = new Auth(history);
-
   return (
     <AuthProvider>
       <ThemeProvider theme={theme}>
-        <Nav auth={auth} />
-
+        <Nav />
         <Container>
           <Route path="/" exact component={Home} />
-          <Route path="/profile" render={(props: RouterProps) => auth.isAuthenticated() ? <Profile auth={auth} {...props} /> : <Redirect to="/" />} />
-          <Route path="/public" exact render={(props: RouterProps) => <Public auth={auth} {...props} />} />
-          <Route path="/private" exact render={(props: RouterProps) => <Private auth={auth} {...props} />} />
-
+          <Route path="/public" exact component={Public} />
+          <Route path="/private" exact component={Private} />
+          <PrivateRoute
+            path="/profile"
+            exact
+            component={Profile}
+          />
           <PrivateRoute
             path="/courses"
             exact
             component={Courses}
           />
-
-          <Route path="/callback" render={(props: RouterProps) => <Callback auth={auth} {...props} />} />
-
+          <Route path="/callback" component={Callback} />
         </Container>
       </ThemeProvider>
     </AuthProvider>

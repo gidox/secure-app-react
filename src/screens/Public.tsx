@@ -1,12 +1,7 @@
 import { Heading } from "@theme-ui/components";
 import { useEffect, useState } from "react";
-import Auth from "../Auth/Auth";
 
-type Props = {
-  auth: Auth;
-};
-
-export default function Public({ auth }: Props): JSX.Element {
+export default function Public(): JSX.Element {
   const [message, setMessage] = useState<string>("")
   useEffect(() => {
     const getPublic = () => {

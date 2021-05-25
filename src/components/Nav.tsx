@@ -1,10 +1,12 @@
 
 import { Link } from 'react-router-dom';
 import { NavLink, Flex } from 'theme-ui'
-import Auth from '../Auth/Auth';
+import { useAuth } from '../AuthContext';
 
-export function Nav({ auth }: { auth: Auth }): React.ReactElement {
-  const { isAuthenticated, userHasScopes, login, logout } = auth;
+export function Nav(): React.ReactElement {
+  const auth = useAuth();
+  const { isAuthenticated, canReadCourses, login, logout } = auth;
+
   return (
     <Flex as="header" variant="header">
       <Link to="/">
@@ -23,14 +25,14 @@ export function Nav({ auth }: { auth: Auth }): React.ReactElement {
           Private
         </NavLink>
       </Link>
-      {isAuthenticated() && userHasScopes(["read:courses"]) && (
+      {isAuthenticated && canReadCourses && (
         <Link to="/courses">
           <NavLink href="#!" p={2}>
             Courses
           </NavLink>
         </Link>
       )}
-      {isAuthenticated() ? (
+      {isAuthenticated ? (
         <NavLink href="#!" p={2} onClick={() => logout()}>
           Logout
         </NavLink>

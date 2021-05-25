@@ -3,6 +3,12 @@ import { History } from "history";
 
 const clientID = process.env.REACT_APP_AUTH0_CLIENTID ?? "";
 const REDIRECT_ON_LOGIN = "redirect_on_login";
+
+let _idToken: string;
+let _accessToken: string;
+let _scopes: string;
+let _expiresAt: number;
+
 export default class Auth {
   userProfile: auth0.Auth0UserProfile | null = null;
   requestedScopes = "openid profile email read:courses";
@@ -51,28 +57,22 @@ export default class Auth {
       authResult.idToken
     ) {
       const expiresIn = authResult.expiresIn;
-      const expiresAt = (expiresIn * 1000 + new Date().getTime()).toString();
-      const scopes = authResult.scope || this.requestedScopes || "";
-      localStorage.setItem("access_token", authResult.accessToken);
-      localStorage.setItem("id_token", authResult.idToken);
-      localStorage.setItem("expires_at", expiresAt);
-      localStorage.setItem("scopes", JSON.stringify(scopes));
+      _expiresAt = expiresIn * 1000 + new Date().getTime();
+      _scopes = authResult.scope || this.requestedScopes || "";
+      _accessToken = authResult.accessToken;
+      _idToken = authResult.idToken;
     }
   };
 
   isAuthenticated() {
-    const expiresAt = localStorage.getItem("expires_at");
+    const expiresAt = _expiresAt;
     if (expiresAt) {
-      const expires = JSON.parse(expiresAt);
-      return new Date().getTime() < expires;
+      return new Date().getTime() < _expiresAt;
     }
     return false;
   }
 
   logout = () => {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("id_token");
-    localStorage.removeItem("expires_at");
     this.auth0.logout({
       clientID,
       returnTo: "http://localhost:3000",
@@ -80,11 +80,10 @@ export default class Auth {
   };
 
   getAccessToken = () => {
-    const accessToken = localStorage.getItem("access_token");
-    if (!accessToken) {
-      return "";
+    if (_accessToken) {
+      return _accessToken;
     }
-    return accessToken;
+    return "";
   };
 
   getProfile = (
@@ -103,10 +102,26 @@ export default class Auth {
   };
 
   userHasScopes(scopes: string[]) {
-    const scope = localStorage.getItem("scopes");
-    if (scope) {
-      const grantScopes = (JSON.parse(scope) || "").split(" ");
+    if (_scopes) {
+      const grantScopes = (_scopes || "").split(" ");
       return scopes.every((sco: string) => grantScopes.includes(sco));
     }
+  }
+
+  renewAccessToken(
+    cb?: (err: auth0.Auth0Error | null, result: auth0.Auth0Result) => void
+  ) {
+    this.auth0.checkSession({}, (err, result) => {
+      if (err) {
+        console.log(`Error ${err.error} - ${err.errorDescription}`);
+      } else {
+        this.setSession(result);
+      }
+      if (cb) cb(err, result);
+    });
+  }
+  scheduleTokenRenewal() {
+    const delay = _expiresAt - Date.now();
+    if (delay > 0) setTimeout(() => this.renewAccessToken(), delay);
   }
 }

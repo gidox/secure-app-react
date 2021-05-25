@@ -1,13 +1,11 @@
 import { Heading } from "@theme-ui/components";
 import { useEffect } from "react";
 import { useLocation } from "react-router";
-import Auth from "../Auth/Auth";
+import { useAuth } from "../AuthContext";
 
-type CallbackProps = {
-  auth: Auth
-}
-export default function Callback({ auth }: CallbackProps): React.ReactElement {
+export default function Callback(): React.ReactElement {
   const location = useLocation();
+  const auth = useAuth();
 
   useEffect(() => {
     const checkToken = () => {

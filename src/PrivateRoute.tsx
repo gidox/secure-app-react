@@ -12,14 +12,14 @@ export default function PrivateRoute({ component: Component, ...rest }: PrivateR
     <Route
       {...rest}
       render={(props) => {
-        if (!auth.isAuthenticated) return <Logout />;
+        if (!auth.isAuthenticated) return <Login />;
         return <Component {...props} />
       }}
 
     />
   )
 }
-function Logout(): React.ReactElement {
+function Login(): React.ReactElement {
   const auth = useAuth();
   useEffect(() => {
     auth.login()

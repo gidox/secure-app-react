@@ -1,10 +1,12 @@
 import { Auth0Error, Auth0UserProfile } from "auth0-js";
 import { useEffect, useState } from "react";
-import Auth from "../Auth/Auth";
+import { useAuth } from "../AuthContext";
 
-export default function Profile({ auth }: { auth: Auth }): React.ReactElement | null {
+export default function Profile(): React.ReactElement | null {
   const [profile, setProfile] = useState<Auth0UserProfile | null>(null);
   const [error, setError] = useState<Auth0Error | null | undefined>(null);
+  const auth = useAuth();
+
   useEffect(() => {
     const loadProfile = () => {
       auth.getProfile((profile, error) => {

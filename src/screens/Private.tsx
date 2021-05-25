@@ -1,18 +1,15 @@
 import { Heading } from "@theme-ui/components";
 import { useEffect, useState } from "react";
-import Auth from "../Auth/Auth";
+import { useAuth } from "../AuthContext";
 
-type Props = {
-  auth: Auth;
-};
-
-export default function Private({ auth }: Props): JSX.Element {
-  const [message, setMessage] = useState<string>("")
+export default function Private(): JSX.Element {
+  const [message, setMessage] = useState<string>("");
+  const auth = useAuth();
   useEffect(() => {
     const getPrivate = () => {
       fetch('/private', {
         headers: {
-          Authorization: `Bearer ${auth.getAccessToken()}`
+          Authorization: `Bearer ${auth.getAccessToken}`
         }
       }).then(response => {
         if (response.ok) return response.json();
