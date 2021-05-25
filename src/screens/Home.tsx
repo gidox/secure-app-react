@@ -1,13 +1,18 @@
-import Auth from "../Auth/Auth";
+import { Link } from "react-router-dom";
+import { useAuth } from "../AuthContext";
 
-type HomeProps = {
-  auth: Auth
-}
-export default function Home({ auth }: HomeProps): React.ReactElement {
+
+export default function Home(): React.ReactElement {
+  const auth = useAuth();
+  const { isAuthenticated, login } = auth;
   return (
     <>
       <h1>Home Screen</h1>
-      <button onClick={() => auth.login()}>Log me in!</button>
+      {isAuthenticated ? (
+        <Link to="/profile">View Profile</Link>
+      ) : (
+        <button onClick={() => login()}>Log me in!</button>
+      )}
     </>
   );
 }
